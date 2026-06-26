@@ -55,6 +55,11 @@ composer install
 
 mkdir -p public src tests
 
+cat > .gitignore << 'EOF'
+/vendor/
+/.env
+EOF
+
 cat > public/index.php << 'EOF'
 <?php
 
