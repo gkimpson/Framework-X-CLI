@@ -69,6 +69,7 @@ $app = new FrameworkX\App();
 
 $app->get('/', App\HelloController::class);
 $app->get('/users/{name}', App\UserController::class);
+$app->post('/users', App\CreateUserController::class);
 
 $app->run();
 EOF
@@ -104,6 +105,27 @@ class UserController
         return Response::plaintext(
             "Hello " . $request->getAttribute('name') . "!\n"
         );
+    }
+}
+EOF
+
+cat > src/CreateUserController.php << 'EOF'
+<?php
+
+namespace App;
+
+use Psr\Http\Message\ServerRequestInterface;
+use React\Http\Message\Response;
+
+class CreateUserController
+{
+    public function __invoke(ServerRequestInterface $request): Response
+    {
+        $data = json_decode((string) $request->getBody(), true) ?? [];
+        $name = $data['name'] ?? 'stranger';
+
+        return Response::plaintext("Hello " . $name . "!\n")
+            ->withStatus(201);
     }
 }
 EOF
@@ -152,6 +174,41 @@ class UserControllerTest extends TestCase
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame("Hello Alice!\n", (string) $response->getBody());
+    }
+}
+EOF
+
+cat > tests/CreateUserControllerTest.php << 'EOF'
+<?php
+
+namespace App\Tests;
+
+use App\CreateUserController;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use React\Http\Message\ServerRequest;
+
+class CreateUserControllerTest extends TestCase
+{
+    public function testReturnsCreatedWithName(): void
+    {
+        $request = new ServerRequest('POST', 'http://localhost/users', ['Content-Type' => 'application/json'], '{"name":"Alice"}');
+
+        $response = (new CreateUserController())($request);
+
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame(201, $response->getStatusCode());
+        $this->assertSame("Hello Alice!\n", (string) $response->getBody());
+    }
+
+    public function testFallsBackToStrangerWhenNameMissing(): void
+    {
+        $request = new ServerRequest('POST', 'http://localhost/users', ['Content-Type' => 'application/json'], '{}');
+
+        $response = (new CreateUserController())($request);
+
+        $this->assertSame(201, $response->getStatusCode());
+        $this->assertSame("Hello stranger!\n", (string) $response->getBody());
     }
 }
 EOF

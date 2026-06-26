@@ -15,25 +15,7 @@ A single bash script that scaffolds a new [Framework-X](https://github.com/clue/
 bash /path/to/create-framework-x my-app
 ```
 
-**Option 2 — Add to PATH**
-
-```bash
-git clone https://github.com/yourusername/framework-x-cli.git
-```
-
-Add to your `~/.zshrc` (or `~/.bashrc`):
-
-```bash
-export PATH="$PATH:/path/to/framework-x-cli"
-```
-
-Then reload your shell:
-
-```bash
-source ~/.zshrc
-```
-
-**Option 3 — Symlink into `/usr/local/bin`**
+**Option 2 — Symlink into `/usr/local/bin`**
 
 ```bash
 ln -s /path/to/framework-x-cli/create-framework-x /usr/local/bin/create-framework-x
