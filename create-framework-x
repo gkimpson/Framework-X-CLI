@@ -168,8 +168,11 @@ EOF
 echo ""
 echo "Project '$PROJECT' created successfully!"
 echo ""
-echo "Run tests:         vendor/bin/phpunit"
-echo "Start dev server:  php -S localhost:8000 -t public/"
+echo "Running tests..."
+echo ""
+
+vendor/bin/phpunit
+
 echo ""
 echo "Starting dev server at http://localhost:8000"
 echo "Press Ctrl+C to stop."
