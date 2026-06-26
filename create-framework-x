@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+set -e
+
+if [ $# -ne 1 ]; then
+    echo "Usage: create-framework-x <project-name>"
+    exit 1
+fi
+
+PROJECT="$1"
+
+if ! command -v php &> /dev/null; then
+    echo "Error: php not found. Install PHP first."
+    exit 1
+fi
+
+if ! command -v composer &> /dev/null; then
+    echo "Error: composer not found. Install Composer first."
+    echo "See: https://getcomposer.org/download/"
+    exit 1
+fi
+
+if [ -d "$PROJECT" ]; then
+    echo "Error: directory '$PROJECT' already exists."
+    exit 1
+fi
+
+mkdir "$PROJECT"
+cd "$PROJECT"
+
+echo "Creating Framework-X project: $PROJECT"
+echo ""
+
+composer require clue/framework-x:^0.17
+
+composer install
+
+mkdir -p public
+
+cat > public/index.php << 'EOF'
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$app = new FrameworkX\App();
+
+$app->get('/', function () {
+    return React\Http\Message\Response::plaintext(
+        "Hello wörld!\n"
+    );
+});
+
+$app->get('/users/{name}', function (Psr\Http\Message\ServerRequestInterface $request) {
+    return React\Http\Message\Response::plaintext(
+        "Hello " . $request->getAttribute('name') . "!\n"
+    );
+});
+
+$app->run();
+EOF
+
+echo ""
+echo "Project '$PROJECT' created successfully!"
+echo "Starting dev server at http://localhost:8000"
+echo "Press Ctrl+C to stop."
+echo ""
+
+php -S localhost:8000 -t public/
