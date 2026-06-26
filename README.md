@@ -24,16 +24,10 @@ ln -s /path/to/framework-x-cli/create-framework-x /usr/local/bin/create-framewor
 ## Usage
 
 ```bash
-# Basic
 create-framework-x my-app
-
-# With Docker
-create-framework-x my-app --with-docker
 ```
 
-Basic scaffolds and starts a dev server at **http://localhost:8000**. With `--with-docker` it also generates a `Dockerfile` and `docker-compose.yml`, then runs `docker compose up --build` on **http://localhost:8080**.
-
-Press `Ctrl+C` to stop.
+Scaffolds the project and starts a dev server at **http://localhost:8000**. Press `Ctrl+C` to stop.
 
 ## What you get
 
@@ -53,15 +47,6 @@ my-app/
 │   ├── UserControllerTest.php
 │   └── CreateUserControllerTest.php
 └── vendor/
-```
-
-With `--with-docker`:
-
-```
-my-app/
-├── Dockerfile
-├── docker-compose.yml
-└── .dockerignore
 ```
 
 ## Routes
